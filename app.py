@@ -8,6 +8,10 @@ from main import process_input
 
 def save_uploaded_file(uploaded_file):
     try:
+        src_dir = 'src'
+        if not os.path.exists(src_dir):
+            os.makedirs(src_dir)
+
         with open(os.path.join("src", uploaded_file.name), "wb") as f:
             f.write(uploaded_file.getbuffer())
         return True
