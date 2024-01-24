@@ -9,20 +9,19 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
 
 # Retrieval imports
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_community.document_loaders import DirectoryLoader
+from langchain_community.document_loaders import S3DirectoryLoader
+from langchain_community.document_loaders import S3FileLoader
 
-def get_docs_from_pdf():
-    loader = PyPDFLoader('docs/pays.pdf')
+def get_docs_from_folder(name):
+    loader = S3DirectoryLoader("lvz-img2json", name + "/")
     docs = loader.load()
+    print(docs)
     return docs
 
-def get_docs_from_folder():
-    loader = DirectoryLoader('src')
-    docs = loader.load()
-    return docs
+def get_docs_from_file(fileName):
+    loader = S3FileLoader("lvz-img2json", fileName)
 
-def process_input(user_input):
+def process_input(name, user_input, uploaded_files):
 
     model = ChatOpenAI(
         model='gpt-3.5-turbo-1106'
@@ -42,7 +41,7 @@ def process_input(user_input):
         prompt=prompt,
     )
 
-    docs = get_docs_from_folder()
+    docs = get_docs_from_folder(name)
 
     # Invoke chain
     response = chain.invoke({
